@@ -1,56 +1,78 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ModalNotificacion from "./components/ModalNotificacion"
 import Notificaciones from "./components/Notificaciones"
+import mockNotifications from "./mocks/mockNotifications"
+
 
 function App() {
-  const [mostrarModal, setMostrarModal] = useState(false)
-  const [datosDeposito, setDatosDeposito] = useState(null)
   const [notificaciones, setNotificaciones] = useState([])
+  const [modalVisible, setModalVisible] = useState(false)
+  const [notificacionActiva, setNotificacionActiva] = useState(null)
 
-  const simularDeposito = () => {
-    const nuevaNotificacion = {
-      fecha: "12 de abril de 2025",
-      hora: "16:00",
-      usuario: "Carlos Gómez",
-    }
+  // Cargar las notificaciones iniciales desde el mock
+  useEffect(() => {
+    setNotificaciones(mockNotifications)
+  }, [])
 
-    setDatosDeposito(nuevaNotificacion)
-    setMostrarModal(true)
+  // Abre el modal con los datos seleccionados
+  const abrirModal = (datos) => {
+    setNotificacionActiva(datos)
+    setModalVisible(true)
   }
 
+  // Cierra el modal
   const cerrarModal = () => {
-    setMostrarModal(false)
-    setNotificaciones([datosDeposito, ...notificaciones])
+    setModalVisible(false)
+    setNotificacionActiva(null)
   }
+
+  // Simular una nueva notificación
+  const simularNotificacion = () => {
+    const randomUser = mockNotifications[Math.floor(Math.random() * mockNotifications.length)]
+  
+    const estados = ["Pago confirmado", "En proceso", "Pago fallido"]
+    const estadoAleatorio = estados[Math.floor(Math.random() * estados.length)]
+  
+    const nueva = {
+      id: Date.now(),
+      usuario: randomUser.usuario,
+      fecha: new Date().toLocaleDateString(),
+      hora: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      estado: estadoAleatorio,
+    }
+  
+    setNotificaciones((prev) => [nueva, ...prev])
+  }
+
 
   return (
     <div style={{ background: "#f3f4f6", minHeight: "100vh", paddingTop: "40px" }}>
-      <button
-        onClick={simularDeposito}
-        style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          display: "block",
-          marginBottom: "20px",
-          padding: "10px 16px",
-          background: "#1e3a8a",
-          color: "white",
-          borderRadius: "8px",
-          border: "none",
-        }}
-      >
-        Simular Depósito Garantía
-      </button>
+      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+        <button
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#1f2937",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            
+          }}
+          onClick={simularNotificacion}
+        >
+          Simular notificación
+        </button>
+      </div>
+
+      <Notificaciones lista={notificaciones} onClick={abrirModal} />
 
       <ModalNotificacion
-        visible={mostrarModal}
-        datos={datosDeposito}
+        visible={modalVisible}
+        datos={notificacionActiva}
         onClose={cerrarModal}
       />
-
-      <Notificaciones lista={notificaciones} />
     </div>
   )
 }
-export default App
 
+export default App

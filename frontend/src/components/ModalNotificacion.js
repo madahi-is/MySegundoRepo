@@ -1,25 +1,33 @@
-import "./ModalNotificacion.css"
+import React from "react"
+import "./ModalNotificacion.css" // opcional para estilos
 
-export default function ModalNotificacion({ datos, visible, onClose }) {
-  if (!visible) return null
+export default function ModalNotificacion({ visible, datos, onClose }) {
+  if (!visible || !datos) return null
 
   return (
     <div className="modal-overlay">
-      <div className="modal-box">
-        <img
-          src="https://img.icons8.com/emoji/48/bell-emoji.png"
-          alt="bell"
-          className="modal-icon"
-        />
-        <h2 className="modal-title">¡Depósito de Garantía Registrado!</h2>
-        <p className="modal-text">
-          Tu depósito ha sido procesado correctamente.
+      <div className="modal-content">
+        <div className="modal-header">
+          <span className="icono-campana">🔔</span>
+          <h2>¡Depósito de Garantía Registrado!</h2>
+        </div>
+        <p>Tu depósito ha sido procesado correctamente.</p>
+        <p>
+          <strong>Estado:</strong>{" "}
+          <span className="estado-confirmado">{datos.estado}</span>
         </p>
-        <p className="modal-status">Estado: <span className="highlight">Pago confirmado</span></p>
-        <p>Fecha: {datos.fecha}</p>
-        <p>Hora: {datos.hora}</p>
-        <p>Usuario: {datos.usuario}</p>
-        <button className="modal-btn" onClick={onClose}>Ver detalles</button>
+        <p>
+          <strong>Fecha:</strong> {datos.fecha}
+        </p>
+        <p>
+          <strong>Hora:</strong> {datos.hora}
+        </p>
+        <p>
+          <strong>Usuario:</strong> {datos.usuario}
+        </p>
+        <button className="boton-detalles" onClick={onClose}>
+          Cerrar
+        </button>
       </div>
     </div>
   )
